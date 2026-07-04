@@ -5,51 +5,59 @@ const button = document.getElementById("formatBtn");
 
 let is24 = true;
 
-function updateClock(){
-
+// Update clock
+function updateClock() {
     const now = new Date();
 
     let hour = now.getHours();
     const minute = now.getMinutes();
     const second = now.getSeconds();
 
-    if(hour < 12){
+    // Greeting
+    if (hour < 12) {
         greeting.textContent = "Good Morning";
-    }
-    else if(hour < 18){
+    } else if (hour < 18) {
         greeting.textContent = "Good Afternoon";
-    }
-    else{
+    } else {
         greeting.textContent = "Good Evening";
     }
 
-    let period = "";
-
-    if(!is24){
-        period = hour >= 12 ? " PM" : " AM";
+    // Handle 12-hour format
+    let suffix = "";
+    if (!is24) {
+        suffix = hour < 12 ? " AM" : " PM";
         hour = hour % 12 || 12;
     }
 
-    clock.textContent =
-    ${String(hour).padStart(2,"0")}:${String(minute).padStart(2,"0")}:${String(second).padStart(2,"0")}${period};
+    // Format time
+    const hh = String(hour).padStart(2, "0");
+    const mm = String(minute).padStart(2, "0");
+    const ss = String(second).padStart(2, "0");
 
-    date.textContent = now.toDateString();
+    clock.textContent = `${hh}:${mm}:${ss}${suffix}`;
+
+    // Format date
+    date.textContent = now.toLocaleDateString(undefined, {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+    });
 }
 
-button.onclick = function(){
-
+// Toggle between 24-hour and 12-hour format
+button.addEventListener("click", function () {
     is24 = !is24;
 
-    if(is24){
-        button.textContent = "Switch to 12-Hour";
-    }
-    else{
-        button.textContent = "Switch to 24-Hour";
-    }
+    button.textContent = is24
+        ? "Switch to 12-Hour"
+        : "Switch to 24-Hour";
 
     updateClock();
-};
+});
 
+// Initial display
 updateClock();
 
-setInterval(updateClock,1000);
+// Update every second
+setInterval(updateClock, 1000);
